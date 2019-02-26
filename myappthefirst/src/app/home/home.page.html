@@ -1,0 +1,30 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>
+      Recording
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+    <ion-card class="welcome-card">
+            <ion-card-header>
+              <ion-card-subtitle>Result:</ion-card-subtitle>
+              </ion-card-header>
+              <ion-card-content class="ioncardcontent" *ngFor="let match of matches">
+                         <p>{{ match }}</p>
+              </ion-card-content>
+    </ion-card>
+    <div class="buttonspeech">
+            <ion-button>
+             <ion-icon slot="start" name="star" (click)="getPermission()"></ion-icon>
+            Get Permission
+             </ion-button>
+
+            <ion-button>
+            Recording
+            <ion-icon slot="end" name="mic" (click)="startListening()"></ion-icon>
+            </ion-button>
+    </div>
+
+</ion-content>
+
