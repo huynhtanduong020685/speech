@@ -23,74 +23,32 @@ export class HomePage {
     private plt: Platform, 
     private cd: ChangeDetectorRef,
     private zone: NgZone) { }
-  
 
-  async hasPermission():Promise<boolean> {
-        try {
-          const permission = await this.speechRecognition.hasPermission();
-          console.log(permission);
-
-          return permission;
-        } catch(e) {
-          console.log(e);
+      stopListening() {
+          this.speechRecognition.stopListening().then(() => {
+          this.isRecording = false;
+            });
+      }
+     
+      getPermission() {
+          this.speechRecognition.hasPermission()
+            .then((hasPermission: boolean) => {
+              if (!hasPermission) {
+                this.speechRecognition.requestPermission();
+              }
+            });
+      }
+     
+      startListening() {
+        let options = {
+          language: 'en-US'
         }
-    }
-
-   async getPermission():Promise<void> {
-      try {
-        this.speechRecognition.requestPermission();
-      } catch(e) {
-        console.log(e);
+        this.speechRecognition.startListening().subscribe(matches => {
+          this.matches = matches;
+          this.cd.detectChanges();
+        });
+        this.isRecording = true;
       }
-    }
-    //stop recording
-  stopListening() {
-      this.speechRecognition.stopListening().then(() => {
-        this.isRecording = false;
-      });
-  }
-  //START RECORDING 
-  // startListening() {
-  //   this.matches =[];
-  //   let options = {
-  //       language: 'en-US'
-  //     }
-  //   // Start the recognition process
-  //     this.speechRecognition.startListening(options).subscribe(matches => {
-  //       this.matches = matches;
-  //       this.cd.detectChanges();
-  //     });
-  //     this.isRecording = true;
-  // }
-
-  startListening(): void {
-    this.matches =[];
-    
-    let options = {
-        language: 'en-US'
-      }
-      console.log('listen action triggered');
-      if (this.isRecording) {
-        this.speechRecognition.stopListening();
-        this.toggleListenMode();
-        return;
-      }
-      this.toggleListenMode();
-      let _this = this;
-      
-      this.speechRecognition.startListening(options)
-        .subscribe(matches => {
-          _this.zone.run(() => {
-            _this.matches = matches;
-            this.cd.detectChanges();
-          })
-        }, error => console.error(error));
-
-     }
-    toggleListenMode():void {
-      this.isRecording = this.isRecording ? false : true;
-      console.log('listening mode is now : ' + this.isRecording);
-  }
-
-
+     
 }
+        
